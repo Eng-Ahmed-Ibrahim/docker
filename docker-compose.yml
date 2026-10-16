@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  node-app:
+    container_name: node-express-app-container
+
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - mongo-db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: p@ssw0rd
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://root:p%40ssw0rd@mongo:27017"
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: p@ssw0rd
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-db:

@@ -1,0 +1,12 @@
+services:
+  node-app:
+    build: 
+      context: .
+      target: development
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 3000:3000
+    environment: 
+      - ENV_NODE=Development
+    command: npm run dev
