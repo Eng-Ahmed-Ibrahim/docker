@@ -3,28 +3,50 @@ version: "3"
 services:
   node-app:
     container_name: node-express-app-container
+    depends_on:
+      - postgres
+  # mongo:
+  #   image: mongo
+  #   restart: always
+  #   volumes:
+  #     - mongo-db:/data/db
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: p@ssw0rd
 
-  mongo:
-    image: mongo
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     ME_CONFIG_MONGODB_URL: "mongodb://root:p%40ssw0rd@mongo:27017"
+  #     ME_CONFIG_BASICAUTH_ENABLED: "true"
+  #     ME_CONFIG_BASICAUTH_USERNAME: root
+  #     ME_CONFIG_BASICAUTH_PASSWORD: p@ssw0rd
+  #   depends_on:
+  #     - mongo
+  
+  redis:
+    image: redis
+  nginx:
+    image: nginx:stable-alpine
+    volumes:
+     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+    - "8080:80"
+    depends_on:
+    - node-app
+  postgres:
+    image: postgres
     restart: always
     volumes:
-      - mongo-db:/data/db
+      - postgres-db:/var/lib/postgresql
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: p@ssw0rd
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: example
 
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_URL: "mongodb://root:p%40ssw0rd@mongo:27017"
-      ME_CONFIG_BASICAUTH_ENABLED: "true"
-      ME_CONFIG_BASICAUTH_USERNAME: root
-      ME_CONFIG_BASICAUTH_PASSWORD: p@ssw0rd
-    depends_on:
-      - mongo
 
 volumes:
   mongo-db:
+  postgres-db:
